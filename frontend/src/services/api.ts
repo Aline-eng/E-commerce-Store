@@ -1,11 +1,47 @@
 import axios from 'axios';
-//import { Product } from '../context/CartContext';
+import { Product } from '../context/CartContext';
 
+// Use environment variable for API URL
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
+console.log('🔧 API Base URL:', API_BASE_URL); // Debug log
 
 const api = axios.create({
   baseURL: API_BASE_URL,
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  }
 });
+
+// Add request interceptor for debugging
+api.interceptors.request.use(
+  (config) => {
+    console.log(`🔄 Making ${config.method?.toUpperCase()} request to: ${config.url}`);
+    return config;
+  },
+  (error) => {
+    console.error('❌ Request error:', error);
+    return Promise.reject(error);
+  }
+);
+
+// Add response interceptor for debugging
+api.interceptors.response.use(
+  (response) => {
+    console.log(`✅ Response from ${response.config.url}:`, response.status);
+    return response;
+  },
+  (error) => {
+    console.error(`❌ API Error:`, {
+      url: error.config?.url,
+      status: error.response?.status,
+      message: error.response?.data?.message || error.message,
+      data: error.response?.data
+    });
+    return Promise.reject(error);
+  }
+);
 
 export interface OrderData {
   customer: {
@@ -27,9 +63,19 @@ export interface OrderData {
   totalAmount: number;
 }
 
-// Unified API functions that work with both old and new components
+// Test backend connection
+export const testBackendConnection = async () => {
+  try {
+    const response = await api.get('/health');
+    return response.data;
+  } catch (error) {
+    console.error('Backend connection test failed:', error);
+    throw error;
+  }
+};
+
+// Unified API functions
 export const productAPI = {
-  // For new components
   getProducts: async (params?: {
     category?: string;
     featured?: boolean;
@@ -46,7 +92,6 @@ export const productAPI = {
     return response.data;
   },
 
-  // For old components (legacy support)
   getAllProducts: async () => {
     const response = await api.get('/products');
     return response.data;
@@ -59,7 +104,6 @@ export const productAPI = {
 };
 
 export const orderAPI = {
-  // For new components
   createOrder: async (orderData: OrderData) => {
     const response = await api.post('/orders', orderData);
     return response.data;
@@ -75,7 +119,6 @@ export const orderAPI = {
     return response.data;
   },
 
-  // For old components (legacy support)
   getAllOrders: async () => {
     const response = await api.get('/orders');
     return response.data;
@@ -87,27 +130,15 @@ export const orderAPI = {
   }
 };
 
-// Auth API
-export const authAPI = {
-  login: async (email: string, password: string) => {
-    const response = await api.post('/auth/login', { email, password });
-    return response.data;
-  },
-  register: async (userData: any) => {
-    const response = await api.post('/auth/register', userData);
-    return response.data;
-  },
-};
-
-// Legacy exports for components that use the old structure
+// Legacy exports for components
 export const getProducts = async () => {
   try {
+    console.log('🔄 Fetching products from:', API_BASE_URL);
     const data = await productAPI.getAllProducts();
-    console.log('API Response:', data); // Debug log
-    // Handle both response formats
+    console.log('📦 Products data received:', data);
     return data.products || data || [];
   } catch (error) {
-    console.error('Error in getProducts:', error);
+    console.error('❌ Error in getProducts:', error);
     throw error;
   }
 };
@@ -119,20 +150,3 @@ export const getProductById = async (id: string) => {
 export const getOrders = async () => {
   return await orderAPI.getAllOrders();
 };
-
-// // Add this to see what's happening with API calls
-// api.interceptors.request.use((config) => {
-//   console.log(`🔄 Making ${config.method?.toUpperCase()} request to: ${config.url}`);
-//   return config;
-// });
-
-// api.interceptors.response.use(
-//   (response) => {
-//     console.log(`✅ Response from ${response.config.url}:`, response.data);
-//     return response;
-//   },
-//   (error) => {
-//     console.error(`❌ Error from ${error.config?.url}:`, error.response?.data || error.message);
-//     return Promise.reject(error);
-//   }
-// );
