@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useState } from 'react';
 import { useCart } from '../context/CartContext';
-import { getProducts } from '../services/api';
+import { getProducts, testBackendConnection } from '../services/api';
 
 interface Product {
   _id: string;
@@ -19,42 +19,90 @@ const ProductList: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [backendStatus, setBackendStatus] = useState<'checking' | 'online' | 'offline'>('checking');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
 
   const categories = ['all', 'Electronics', 'Fashion', 'Home'];
 
+  // Test backend connection first
+  useEffect(() => {
+    const testConnection = async () => {
+      try {
+        setBackendStatus('checking');
+        await testBackendConnection();
+        setBackendStatus('online');
+      } catch (err: any) {
+        console.error('Backend connection failed:', err);
+        setBackendStatus('offline');
+        setError(`Backend connection failed: ${err.message}`);
+      }
+    };
+    testConnection();
+  }, []);
+
   const loadProducts = useCallback(async () => {
-  try {
-    setLoading(true);
-    setError(null);
+    if (backendStatus !== 'online') return;
     
-    const data = await getProducts();
-    console.log('Loaded products data:', data); // Debug log
-    
-    // Handle different response formats
-    let productsArray;
-    if (Array.isArray(data)) {
-      productsArray = data;
-    } else if (data && data.products && Array.isArray(data.products)) {
-      productsArray = data.products;
-    } else {
-      productsArray = [];
+    try {
+      setLoading(true);
+      setError(null);
+      
+      console.log('🔄 Loading products...');
+      const data = await getProducts();
+      console.log('📦 Products loaded:', data);
+      
+      setProducts(Array.isArray(data) ? data : []);
+    } catch (err: any) {
+      console.error('Error loading products:', err);
+      setError(err.message || 'Failed to load products. Please try again.');
+    } finally {
+      setLoading(false);
     }
-    
-    console.log('Processed products:', productsArray); // Debug log
-    setProducts(productsArray);
-  } catch (err: any) {
-    console.error('Error loading products:', err);
-    setError(err.response?.data?.message || 'Failed to load products');
-  } finally {
-    setLoading(false);
-  }
-}, []);
+  }, [backendStatus]);
 
   useEffect(() => {
     loadProducts();
   }, [loadProducts]);
+
+  // Connection status display
+  if (backendStatus === 'checking') {
+    return (
+      <div className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div className="py-12 text-center">
+          <div className="mx-auto mb-4 loading-spinner"></div>
+          <p className="text-gray-600">Checking backend connection...</p>
+          <p className="mt-2 text-sm text-gray-500">
+            Testing: {process.env.REACT_APP_API_URL}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (backendStatus === 'offline') {
+    return (
+      <div className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div className="p-6 text-center border border-red-200 rounded-lg bg-red-50">
+          <div className="mb-2 text-lg font-semibold text-red-600">
+            🚫 Backend Server Unavailable
+          </div>
+          <div className="mb-4 text-red-500">
+            {error}
+          </div>
+          <div className="p-4 mb-4 text-sm text-gray-600 bg-white border rounded">
+            <strong>Backend URL:</strong> {process.env.REACT_APP_API_URL}
+          </div>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-3 font-semibold text-white transition-colors bg-red-600 rounded-lg hover:bg-red-700"
+          >
+            🔄 Retry Connection
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const filteredProducts = products.filter(product => {
     const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
