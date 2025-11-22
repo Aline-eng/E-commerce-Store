@@ -19,71 +19,72 @@ const Cart: React.FC = () => {
   });
 
   const handleCheckout = async () => {
-    if (state.items.length === 0) {
-      alert('🛒 Your cart is empty');
-      return;
-    }
+  if (state.items.length === 0) {
+    alert('🛒 Your cart is empty');
+    return;
+  }
 
-    if (!customerInfo.name || !customerInfo.email || !customerInfo.address.street) {
-      alert('📝 Please fill in all required customer information');
-      return;
-    }
+  if (!customerInfo.name || !customerInfo.email || !customerInfo.address.street) {
+    alert('📝 Please fill in all required customer information');
+    return;
+  }
 
-    try {
-      setLoading(true);
-      
-      const orderData = {
-        customer: customerInfo,
-        items: state.items.map(item => ({
-          product: item.product._id,
-          quantity: item.quantity,
-          price: item.product.price
-        })),
-        totalAmount: state.total
-      };
+  try {
+    setLoading(true);
+    
+    const orderData = {
+      customer: customerInfo,
+      items: state.items.map(item => ({
+        product: item.product._id,
+        quantity: item.quantity,
+        price: item.product.price
+      })),
+      totalAmount: state.total
+    };
 
-      console.log('Sending order data:', orderData); // Debug log
-      
-      const result = await orderAPI.createOrder(orderData);
-      console.log('Order created:', result); // Debug log
-      
-      clearCart();
-      alert('🎉 Order placed successfully! Check your orders page.');
-      
-      // Reset form
-      setCustomerInfo({
-        name: '',
-        email: '',
-        address: {
-          street: '',
-          city: '',
-          state: '',
-          zipCode: '',
-          country: 'United States'
-        }
-      });
-    } catch (err: any) {
-      console.error('Checkout error:', err);
-      alert(`❌ ${err.response?.data?.message || 'Failed to place order. Please try again.'}`);
-    } finally {
-      setLoading(false);
-    }
-  };
+    console.log('Sending order data:', orderData);
+    
+    const result = await orderAPI.createOrder(orderData);
+    console.log('Order created successfully:', result);
+    
+    clearCart();
+    alert(`🎉 Order placed successfully! Order ID: ${result.orderId}`);
+    
+    // Reset form
+    setCustomerInfo({
+      name: '',
+      email: '',
+      address: {
+        street: '',
+        city: '',
+        state: '',
+        zipCode: '',
+        country: 'United States'
+      }
+    });
+  } catch (err: any) {
+    console.error('Checkout error details:', err);
+    const errorMessage = err.response?.data?.message || err.message || 'Failed to place order. Please try again.';
+    alert(`❌ ${errorMessage}`);
+  } finally {
+    setLoading(false);
+  }
+};
 
   if (state.items.length === 0) {
     return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center py-12">
-          <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+      <div className="max-w-4xl px-4 py-8 mx-auto sm:px-6 lg:px-8">
+        <div className="py-12 text-center">
+          <div className="flex items-center justify-center w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full">
             <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Your cart is empty</h2>
-          <p className="text-gray-600 mb-8">Add some products to your cart to get started</p>
+          <h2 className="mb-4 text-2xl font-bold text-gray-900">Your cart is empty</h2>
+          <p className="mb-8 text-gray-600">Add some products to your cart to get started</p>
           <Link
             to="/"
-            className="inline-flex items-center px-6 py-3 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 transition-colors"
+            className="inline-flex items-center px-6 py-3 font-semibold text-white transition-colors rounded-lg bg-primary-600 hover:bg-primary-700"
           >
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -96,16 +97,16 @@ const Cart: React.FC = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Shopping Cart</h1>
+        <h1 className="mb-2 text-3xl font-bold text-gray-900">Shopping Cart</h1>
         <p className="text-gray-600">Review your items and proceed to checkout</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         {/* Cart Items */}
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-lg shadow-soft border border-gray-200">
+          <div className="bg-white border border-gray-200 rounded-lg shadow-soft">
             <div className="p-6 border-b border-gray-200">
               <h2 className="text-xl font-semibold text-gray-900">
                 Cart Items ({state.items.reduce((total, item) => total + item.quantity, 0)})
@@ -119,27 +120,27 @@ const Cart: React.FC = () => {
                     <img
                       src={item.product.image}
                       alt={item.product.name}
-                      className="w-20 h-20 object-cover rounded-lg border border-gray-200"
+                      className="object-cover w-20 h-20 border border-gray-200 rounded-lg"
                     />
                     
                     <div className="flex-1 min-w-0">
                       <h3 className="text-lg font-semibold text-gray-900 truncate">
                         {item.product.name}
                       </h3>
-                      <p className="text-primary-600 font-bold text-lg mt-1">
+                      <p className="mt-1 text-lg font-bold text-primary-600">
                         ${item.product.price}
                       </p>
-                      <p className="text-gray-500 text-sm mt-1">
+                      <p className="mt-1 text-sm text-gray-500">
                         {item.product.category}
                       </p>
                     </div>
 
                     <div className="flex items-center space-x-3">
                       {/* Quantity Controls */}
-                      <div className="flex items-center space-x-2 bg-gray-50 rounded-lg p-1">
+                      <div className="flex items-center p-1 space-x-2 rounded-lg bg-gray-50">
                         <button
                           onClick={() => updateQuantity(item.product._id, item.quantity - 1)}
-                          className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white hover:shadow-sm transition-colors text-gray-600 hover:text-gray-900"
+                          className="flex items-center justify-center w-8 h-8 text-gray-600 transition-colors rounded-full hover:bg-white hover:shadow-sm hover:text-gray-900"
                           disabled={loading}
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -147,13 +148,13 @@ const Cart: React.FC = () => {
                           </svg>
                         </button>
                         
-                        <span className="w-8 text-center font-semibold text-gray-900">
+                        <span className="w-8 font-semibold text-center text-gray-900">
                           {item.quantity}
                         </span>
                         
                         <button
                           onClick={() => updateQuantity(item.product._id, item.quantity + 1)}
-                          className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white hover:shadow-sm transition-colors text-gray-600 hover:text-gray-900"
+                          className="flex items-center justify-center w-8 h-8 text-gray-600 transition-colors rounded-full hover:bg-white hover:shadow-sm hover:text-gray-900"
                           disabled={loading}
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -172,7 +173,7 @@ const Cart: React.FC = () => {
                       {/* Remove Button */}
                       <button
                         onClick={() => removeFromCart(item.product._id)}
-                        className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+                        className="p-2 text-red-500 transition-colors rounded-lg hover:text-red-700 hover:bg-red-50"
                         disabled={loading}
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -189,7 +190,7 @@ const Cart: React.FC = () => {
 
         {/* Checkout Section */}
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-lg shadow-soft border border-gray-200 sticky top-24">
+          <div className="sticky bg-white border border-gray-200 rounded-lg shadow-soft top-24">
             <div className="p-6 border-b border-gray-200">
               <h2 className="text-xl font-semibold text-gray-900">Order Summary</h2>
             </div>
@@ -209,50 +210,50 @@ const Cart: React.FC = () => {
                   <span>Tax</span>
                   <span>${(state.total * 0.1).toFixed(2)}</span>
                 </div>
-                <div className="border-t pt-3 flex justify-between text-lg font-semibold text-gray-900">
+                <div className="flex justify-between pt-3 text-lg font-semibold text-gray-900 border-t">
                   <span>Total</span>
                   <span>${(state.total * 1.1).toFixed(2)}</span>
                 </div>
               </div>
 
               {/* Customer Information */}
-              <div className="space-y-4 pt-4 border-t border-gray-200">
+              <div className="pt-4 space-y-4 border-t border-gray-200">
                 <h3 className="font-semibold text-gray-900">Customer Information</h3>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block mb-1 text-sm font-medium text-gray-700">
                     Full Name *
                   </label>
                   <input
                     type="text"
                     placeholder="John Doe"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                    className="w-full px-3 py-2 transition-colors border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                     value={customerInfo.name}
                     onChange={(e) => setCustomerInfo({...customerInfo, name: e.target.value})}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block mb-1 text-sm font-medium text-gray-700">
                     Email Address *
                   </label>
                   <input
                     type="email"
                     placeholder="john@example.com"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                    className="w-full px-3 py-2 transition-colors border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                     value={customerInfo.email}
                     onChange={(e) => setCustomerInfo({...customerInfo, email: e.target.value})}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block mb-1 text-sm font-medium text-gray-700">
                     Street Address *
                   </label>
                   <input
                     type="text"
                     placeholder="123 Main St"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                    className="w-full px-3 py-2 transition-colors border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                     value={customerInfo.address.street}
                     onChange={(e) => setCustomerInfo({
                       ...customerInfo, 
@@ -263,13 +264,13 @@ const Cart: React.FC = () => {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block mb-1 text-sm font-medium text-gray-700">
                       City
                     </label>
                     <input
                       type="text"
                       placeholder="New York"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                      className="w-full px-3 py-2 transition-colors border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                       value={customerInfo.address.city}
                       onChange={(e) => setCustomerInfo({
                         ...customerInfo, 
@@ -278,13 +279,13 @@ const Cart: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block mb-1 text-sm font-medium text-gray-700">
                       State
                     </label>
                     <input
                       type="text"
                       placeholder="NY"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                      className="w-full px-3 py-2 transition-colors border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                       value={customerInfo.address.state}
                       onChange={(e) => setCustomerInfo({
                         ...customerInfo, 
@@ -296,13 +297,13 @@ const Cart: React.FC = () => {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block mb-1 text-sm font-medium text-gray-700">
                       ZIP Code
                     </label>
                     <input
                       type="text"
                       placeholder="10001"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                      className="w-full px-3 py-2 transition-colors border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                       value={customerInfo.address.zipCode}
                       onChange={(e) => setCustomerInfo({
                         ...customerInfo, 
@@ -311,11 +312,11 @@ const Cart: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block mb-1 text-sm font-medium text-gray-700">
                       Country
                     </label>
                     <select
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                      className="w-full px-3 py-2 transition-colors border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                       value={customerInfo.address.country}
                       onChange={(e) => setCustomerInfo({
                         ...customerInfo, 
@@ -334,11 +335,11 @@ const Cart: React.FC = () => {
               <button
                 onClick={handleCheckout}
                 disabled={loading || !customerInfo.name || !customerInfo.email || !customerInfo.address.street}
-                className="w-full bg-primary-600 text-white py-4 rounded-lg font-semibold hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center space-x-2"
+                className="flex items-center justify-center w-full py-4 space-x-2 font-semibold text-white transition-colors rounded-lg bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    <div className="w-5 h-5 border-b-2 border-white rounded-full animate-spin"></div>
                     <span>Processing...</span>
                   </>
                 ) : (
@@ -354,7 +355,7 @@ const Cart: React.FC = () => {
               {/* Continue Shopping */}
               <Link
                 to="/"
-                className="block text-center text-primary-600 hover:text-primary-700 font-medium py-2 transition-colors"
+                className="block py-2 font-medium text-center transition-colors text-primary-600 hover:text-primary-700"
               >
                 ← Continue Shopping
               </Link>
