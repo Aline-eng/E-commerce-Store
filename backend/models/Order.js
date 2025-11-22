@@ -20,8 +20,7 @@ const orderItemSchema = new mongoose.Schema({
 const orderSchema = new mongoose.Schema({
   orderId: {
     type: String,
-    unique: true,
-    required: true
+    unique: true
   },
   customer: {
     name: {
@@ -59,13 +58,22 @@ const orderSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Generate order ID before saving
+// FIXED: Generate order ID before saving
 orderSchema.pre('save', async function(next) {
-  if (!this.orderId) {
-    const count = await mongoose.model('Order').countDocuments();
-    this.orderId = `ORD${(count + 1).toString().padStart(6, '0')}`;
+  if (this.isNew && !this.orderId) {
+    try {
+      // Generate a unique order ID using timestamp and random string
+      const timestamp = Date.now().toString(36);
+      const random = Math.random().toString(36).substr(2, 5);
+      this.orderId = `ORD${timestamp}${random}`.toUpperCase();
+      next();
+    } catch (error) {
+      console.error('Error generating order ID:', error);
+      next(error);
+    }
+  } else {
+    next();
   }
-  next();
 });
 
 module.exports = mongoose.model('Order', orderSchema);
