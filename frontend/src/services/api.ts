@@ -4,20 +4,21 @@ import { Product } from '../context/CartContext';
 // Use environment variable for API URL
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
-console.log('🔧 API Base URL:', API_BASE_URL); // Debug log
+console.log('🔧 API Base URL:', API_BASE_URL);
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 10000,
+  timeout: 15000,
   headers: {
     'Content-Type': 'application/json',
+    'Accept': 'application/json'
   }
 });
 
-// Add request interceptor for debugging
+// Add request interceptor
 api.interceptors.request.use(
   (config) => {
-    console.log(`🔄 Making ${config.method?.toUpperCase()} request to: ${config.url}`);
+    console.log(`🔄 Making ${config.method?.toUpperCase()} request to: ${config.baseURL}${config.url}`);
     return config;
   },
   (error) => {
@@ -26,7 +27,7 @@ api.interceptors.request.use(
   }
 );
 
-// Add response interceptor for debugging
+// Add response interceptor
 api.interceptors.response.use(
   (response) => {
     console.log(`✅ Response from ${response.config.url}:`, response.status);
@@ -36,10 +37,28 @@ api.interceptors.response.use(
     console.error(`❌ API Error:`, {
       url: error.config?.url,
       status: error.response?.status,
-      message: error.response?.data?.message || error.message,
-      data: error.response?.data
+      statusText: error.response?.statusText,
+      message: error.message,
+      config: error.config
     });
-    return Promise.reject(error);
+    
+    if (error.code === 'NETWORK_ERROR' || error.message.includes('Network Error')) {
+      throw new Error('Cannot connect to backend server. Please check if the server is running.');
+    }
+    
+    if (error.response?.status === 401) {
+      throw new Error('Authentication required');
+    }
+    
+    if (error.response?.status === 404) {
+      throw new Error('API endpoint not found');
+    }
+    
+    if (error.response?.status === 500) {
+      throw new Error('Server error. Please try again later.');
+    }
+    
+    throw error;
   }
 );
 
@@ -66,23 +85,25 @@ export interface OrderData {
 // Test backend connection
 export const testBackendConnection = async () => {
   try {
+    console.log('🔧 Testing backend connection to:', API_BASE_URL);
     const response = await api.get('/health');
+    console.log('✅ Backend connection successful:', response.data);
     return response.data;
-  } catch (error) {
-    console.error('Backend connection test failed:', error);
-    throw error;
+  } catch (error: any) {
+    console.error('❌ Backend connection test failed:', error);
+    if (error.response) {
+      throw new Error(`Backend responded with ${error.response.status}: ${error.response.statusText}`);
+    } else if (error.request) {
+      throw new Error('No response from backend server. Check if the server is running.');
+    } else {
+      throw new Error(`Backend connection error: ${error.message}`);
+    }
   }
 };
 
 // Unified API functions
 export const productAPI = {
-  getProducts: async (params?: {
-    category?: string;
-    featured?: boolean;
-    search?: string;
-    page?: number;
-    limit?: number;
-  }) => {
+  getProducts: async (params?: any) => {
     const response = await api.get('/products', { params });
     return response.data;
   },
@@ -133,11 +154,22 @@ export const orderAPI = {
 // Legacy exports for components
 export const getProducts = async () => {
   try {
-    console.log('🔄 Fetching products from:', API_BASE_URL);
+    console.log('🔄 Fetching products from:', `${API_BASE_URL}/products`);
     const data = await productAPI.getAllProducts();
     console.log('📦 Products data received:', data);
-    return data.products || data || [];
-  } catch (error) {
+    
+    // Handle different response formats
+    if (Array.isArray(data)) {
+      return data;
+    } else if (data && data.products && Array.isArray(data.products)) {
+      return data.products;
+    } else if (data && Array.isArray(data.data)) {
+      return data.data;
+    } else {
+      console.warn('⚠️ Unexpected products response format:', data);
+      return [];
+    }
+  } catch (error: any) {
     console.error('❌ Error in getProducts:', error);
     throw error;
   }
