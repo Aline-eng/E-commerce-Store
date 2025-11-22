@@ -14,5 +14,8 @@
       "src": "/(.*)",
       "dest": "/$1"
     }
-  ]
+  ],
+  "env": {
+    "REACT_APP_API_URL": "https://e-commerce-store-production-4aaa.up.railway.app/api"
+  }
 }
