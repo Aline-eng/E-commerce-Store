@@ -10,11 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB connection
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/ecommerce';
-mongoose.connect(MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+const MONGODB_URI = 'mongodb://localhost:27017/ecommerce';
 
 // Routes
 app.use('/api/products', require('./routes/products'));
@@ -26,9 +22,19 @@ app.get('/api/health', (req, res) => {
   res.json({ message: 'Server is running!' });
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+// Replace connect + listen with an async startup
+(async () => {
+  try {
+    // mongoose.connect no longer needs those deprecated options
+    await mongoose.connect(MONGODB_URI);
+    console.log('MongoDB connected successfully!');
+  } catch (error) {
+    console.error('MongoDB connection error:', error);
+    console.log('Server starting without database connection...');
+  }
 
-module.exports = app;
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+})();
