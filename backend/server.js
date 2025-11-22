@@ -9,9 +9,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// MongoDB connection
-const MONGODB_URI = 'mongodb://localhost:27017/ecommerce';
-
 // Routes
 app.use('/api/products', require('./routes/products'));
 app.use('/api/orders', require('./routes/orders'));
@@ -22,19 +19,36 @@ app.get('/api/health', (req, res) => {
   res.json({ message: 'Server is running!' });
 });
 
-// Replace connect + listen with an async startup
-(async () => {
-  try {
-    // mongoose.connect no longer needs those deprecated options
-    await mongoose.connect(MONGODB_URI);
-    console.log('MongoDB connected successfully!');
-  } catch (error) {
-    console.error('MongoDB connection error:', error);
-    console.log('Server starting without database connection...');
-  }
+// MongoDB connection
+const MONGODB_URI = process.env.MONGODB_URI;
 
-  const PORT = process.env.PORT || 5000;
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-  });
-})();
+async function startServer() {
+  try {
+    if (!MONGODB_URI) {
+      throw new Error('❌ MONGODB_URI is not defined in environment variables');
+    }
+
+    console.log('🔄 Connecting to MongoDB...');
+    
+    // Connect to MongoDB first
+    await mongoose.connect(MONGODB_URI);
+    console.log('✅ MongoDB connected successfully!');
+
+    // Then start the server
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => {
+      console.log(`🚀 Server is running on port ${PORT}`);
+      console.log(`🌐 Health check: http://localhost:${PORT}/api/health`);
+      console.log(`📦 Products API: http://localhost:${PORT}/api/products`);
+    });
+
+  } catch (error) {
+    console.error('❌ Failed to start server:', error.message);
+    process.exit(1);
+  }
+}
+
+// Start the server
+startServer();
+
+module.exports = app;
