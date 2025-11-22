@@ -5,7 +5,7 @@ const API_BASE_URL = 'http://localhost:5000/api';
 // Products
 export const getProducts = async () => {
   const { data } = await axios.get(`${API_BASE_URL}/products`);
-  return data;
+  return data.products; // Return just the products array
 };
 
 export const getProductById = async (id: string) => {

@@ -9,6 +9,9 @@ export interface Product {
   image: string;
   stock: number;
   rating: number;
+  featured?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface CartItem {
@@ -73,7 +76,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
     case 'UPDATE_QUANTITY':
       const updatedItems = state.items.map(item =>
         item.product._id === action.payload.productId
-          ? { ...item, quantity: action.payload.quantity }
+          ? { ...item, quantity: Math.max(0, action.payload.quantity) }
           : item
       ).filter(item => item.quantity > 0);
       
