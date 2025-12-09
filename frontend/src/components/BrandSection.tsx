@@ -4,7 +4,7 @@ const BrandSection: React.FC = () => {
   const brands = ['VERSACE', 'ZARA', 'GUCCI', 'PRADA', 'Calvin Klein'];
 
   return (
-    <div className="py-12 bg-black dark:bg-gray-950">
+    <div className="flex items-center py-12 bg-black dark:bg-gray-950">
       <div className="container px-4 mx-auto overflow-hidden">
         <div className="flex items-center justify-around gap-12 animate-scroll">
           {brands.map((brand, index) => (
