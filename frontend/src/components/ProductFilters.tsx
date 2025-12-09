@@ -45,12 +45,12 @@ const ProductFilters: React.FC<FilterProps> = ({ onFilterChange }) => {
 
   return (
     <div className="w-64 flex-shrink-0">
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-4">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Filters</h3>
+          <h3 className="text-lg font-black text-gray-900 dark:text-white">Filters</h3>
           <button
             onClick={clearFilters}
-            className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+            className="text-xs text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium"
           >
             Clear All
           </button>
@@ -58,7 +58,7 @@ const ProductFilters: React.FC<FilterProps> = ({ onFilterChange }) => {
 
         <div className="space-y-6">
           <div>
-            <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Category</h4>
+            <h4 className="text-sm font-bold text-gray-900 dark:text-white mb-3">Category</h4>
             <div className="space-y-2">
               {['Electronics', 'Fashion', 'Home'].map((category) => (
                 <label key={category} className="flex items-center cursor-pointer">
@@ -66,7 +66,7 @@ const ProductFilters: React.FC<FilterProps> = ({ onFilterChange }) => {
                     type="checkbox"
                     checked={categories.includes(category)}
                     onChange={() => handleCategoryChange(category)}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    className="w-4 h-4 text-black border-gray-300 rounded focus:ring-black"
                   />
                   <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">{category}</span>
                 </label>
@@ -74,8 +74,8 @@ const ProductFilters: React.FC<FilterProps> = ({ onFilterChange }) => {
             </div>
           </div>
 
-          <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-            <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Price Range</h4>
+          <div className="border-t border-gray-200 dark:border-gray-800 pt-6">
+            <h4 className="text-sm font-bold text-gray-900 dark:text-white mb-3">Price Range</h4>
             <div className="space-y-3">
               <input
                 type="range"
@@ -83,7 +83,7 @@ const ProductFilters: React.FC<FilterProps> = ({ onFilterChange }) => {
                 max="1000"
                 value={priceRange[1]}
                 onChange={(e) => handlePriceChange(Number(e.target.value), 1)}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                className="w-full h-2 bg-gray-200 dark:bg-gray-800 rounded-lg appearance-none cursor-pointer accent-black"
               />
               <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
                 <span>${priceRange[0]}</span>
@@ -92,8 +92,8 @@ const ProductFilters: React.FC<FilterProps> = ({ onFilterChange }) => {
             </div>
           </div>
 
-          <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-            <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Rating</h4>
+          <div className="border-t border-gray-200 dark:border-gray-800 pt-6">
+            <h4 className="text-sm font-bold text-gray-900 dark:text-white mb-3">Rating</h4>
             <div className="space-y-2">
               {[4, 3, 2, 1].map((rating) => (
                 <label key={rating} className="flex items-center cursor-pointer">
@@ -102,7 +102,7 @@ const ProductFilters: React.FC<FilterProps> = ({ onFilterChange }) => {
                     name="rating"
                     checked={minRating === rating}
                     onChange={() => handleRatingChange(rating)}
-                    className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    className="w-4 h-4 text-black border-gray-300 focus:ring-black"
                   />
                   <span className="ml-2 text-sm text-gray-700 dark:text-gray-300 flex items-center">
                     {rating}
@@ -116,14 +116,14 @@ const ProductFilters: React.FC<FilterProps> = ({ onFilterChange }) => {
             </div>
           </div>
 
-          <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-            <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Availability</h4>
+          <div className="border-t border-gray-200 dark:border-gray-800 pt-6">
+            <h4 className="text-sm font-bold text-gray-900 dark:text-white mb-3">Availability</h4>
             <label className="flex items-center cursor-pointer">
               <input
                 type="checkbox"
                 checked={inStock}
                 onChange={handleStockChange}
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                className="w-4 h-4 text-black border-gray-300 rounded focus:ring-black"
               />
               <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">In Stock Only</span>
             </label>

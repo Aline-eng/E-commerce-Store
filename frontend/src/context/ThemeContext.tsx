@@ -14,7 +14,13 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   });
 
   useEffect(() => {
-    document.documentElement.classList.toggle('dark', isDark);
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+      document.documentElement.style.colorScheme = 'dark';
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.documentElement.style.colorScheme = 'light';
+    }
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
   }, [isDark]);
 

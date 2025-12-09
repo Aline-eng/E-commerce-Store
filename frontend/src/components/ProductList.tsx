@@ -96,7 +96,7 @@ const ProductList: React.FC = () => {
     return (
       <div className="max-w-7xl mx-auto px-4 py-12 text-center">
         <p className="text-red-600 dark:text-red-400 mb-4">{error}</p>
-        <button onClick={loadProducts} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+        <button onClick={loadProducts} className="btn-primary">
           Retry
         </button>
       </div>
@@ -105,16 +105,18 @@ const ProductList: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
+      <h2 className="section-title dark:text-white">NEW ARRIVALS</h2>
+      
       <div className="mb-6">
         <input
           type="text"
-          placeholder="Search products..."
+          placeholder="Search for products..."
           value={searchTerm}
           onChange={(e) => {
             setSearchTerm(e.target.value);
             handleFilter({ categories: [], priceRange: [0, 1000], minRating: 0, inStock: false });
           }}
-          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 dark:bg-gray-800 dark:text-white"
+          className="input-field dark:bg-gray-900 dark:border-gray-700 dark:text-white"
         />
       </div>
 
@@ -126,60 +128,66 @@ const ProductList: React.FC = () => {
             Showing {filteredProducts.length} of {products.length} products
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProducts.map((product) => (
-              <div
-                key={product._id}
-                className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-shadow"
-              >
-                <div className="relative">
+          {filteredProducts.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-600 dark:text-gray-400 mb-4">No products found</p>
+              <button onClick={() => { setSearchTerm(''); handleFilter({ categories: [], priceRange: [0, 1000], minRating: 0, inStock: false }); }} className="btn-secondary">
+                Clear Filters
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredProducts.map((product) => (
+                <div
+                  key={product._id}
+                  className="card-hover dark:bg-gray-900 dark:border-gray-800"
+                >
                   <Link to={`/product/${product._id}`}>
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-full h-56 object-cover"
-                      loading="lazy"
-                    />
+                    <div className="relative">
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="w-full h-64 object-cover"
+                        loading="lazy"
+                      />
+                      <span className="absolute top-3 right-3 px-2 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-xs font-semibold rounded flex items-center gap-1">
+                        <svg className="w-3 h-3 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        {product.rating.toFixed(1)}
+                      </span>
+                    </div>
                   </Link>
-                  <span className="absolute top-3 left-3 px-3 py-1 bg-white dark:bg-gray-800 text-blue-600 text-xs font-semibold rounded-full">
-                    {product.category}
-                  </span>
-                  <span className="absolute top-3 right-3 px-2 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-xs font-semibold rounded flex items-center gap-1">
-                    <svg className="w-3 h-3 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                    {product.rating.toFixed(1)}
-                  </span>
-                </div>
 
-                <div className="p-4">
-                  <Link to={`/product/${product._id}`}>
-                    <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-2 hover:text-blue-600 transition line-clamp-2">
-                      {product.name}
-                    </h3>
-                  </Link>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
-                    {product.description}
-                  </p>
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-2xl font-bold text-gray-900 dark:text-white">
-                      ${product.price.toFixed(2)}
-                    </span>
-                    <span className={`text-xs font-medium ${product.stock > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
-                    </span>
+                  <div className="p-4">
+                    <Link to={`/product/${product._id}`}>
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 hover:text-blue-600 dark:hover:text-blue-400 transition line-clamp-2">
+                        {product.name}
+                      </h3>
+                    </Link>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
+                      {product.description}
+                    </p>
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-2xl font-black text-gray-900 dark:text-white">
+                        ${product.price.toFixed(2)}
+                      </span>
+                      <span className={`text-xs font-medium ${product.stock > 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                        {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => handleAddToCart(product)}
+                      disabled={product.stock === 0}
+                      className="btn-primary w-full"
+                    >
+                      {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
+                    </button>
                   </div>
-                  <button
-                    onClick={() => handleAddToCart(product)}
-                    disabled={product.stock === 0}
-                    className="w-full py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
-                  >
-                    {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
-                  </button>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
