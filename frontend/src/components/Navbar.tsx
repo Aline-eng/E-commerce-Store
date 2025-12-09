@@ -15,6 +15,7 @@ const Navbar: React.FC = () => {
 
   const isActive = (path: string) => location.pathname === path;
   const [menuOpen, setMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   return (
     <>
@@ -72,26 +73,31 @@ const Navbar: React.FC = () => {
             </Link>
 
             {isAuthenticated ? (
-              <div className="relative group">
-                <button className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white">
-                  {user?.name}
+              <div className="relative">
+                <button 
+                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white"
+                >
+                  {user?.name} ▼
                 </button>
-                <div className="absolute right-0 hidden w-48 py-2 mt-2 bg-white border border-gray-200 shadow-lg dark:bg-gray-900 dark:border-gray-800 rounded-xl group-hover:block">
-                  <Link to="/profile" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
-                    Profile
-                  </Link>
-                  {user?.role === 'admin' && (
-                    <Link to="/admin" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
-                      Admin Dashboard
+                {userMenuOpen && (
+                  <div className="absolute right-0 z-50 w-48 py-2 mt-2 bg-white border border-gray-200 shadow-lg dark:bg-gray-900 dark:border-gray-800 rounded-xl">
+                    <Link to="/profile" onClick={() => setUserMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
+                      Profile
                     </Link>
-                  )}
-                  <Link to="/orders" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
-                    Orders
-                  </Link>
-                  <Link to="/wishlist" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
-                    Wishlist
-                  </Link>
-                </div>
+                    {user?.role === 'admin' && (
+                      <Link to="/admin" onClick={() => setUserMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
+                        Admin Dashboard
+                      </Link>
+                    )}
+                    <Link to="/orders" onClick={() => setUserMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
+                      Orders
+                    </Link>
+                    <Link to="/wishlist" onClick={() => setUserMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
+                      Wishlist
+                    </Link>
+                  </div>
+                )}
               </div>
             ) : (
               <Link
