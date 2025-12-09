@@ -58,7 +58,7 @@ const sampleProducts = [
     description: "LED desk lamp with adjustable brightness",
     price: 29.99,
     category: "Home",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500",
+    image: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=500",
     stock: 35,
     featured: false,
     rating: 4.1
