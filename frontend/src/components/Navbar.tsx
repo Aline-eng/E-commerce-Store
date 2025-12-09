@@ -36,17 +36,17 @@ const Navbar: React.FC = () => {
 
           {/* Menu */}
           <div className="items-center hidden gap-8 md:flex">
-            <div className="relative group">
-              <Link to="/products" className="text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-400">Shop</Link>
-            </div>
-            <Link to="/products" className="text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-400">
-              On Sale
+            <Link to="/" className="text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-400">
+              Home
             </Link>
-            <Link to="/products" className="text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-400">
-              New Arrivals
+            <Link to="/about" className="text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-400">
+              About Us
             </Link>
-            <Link to="/products" className="text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-400">
-              Brands
+            <Link to="/contact" className="text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-400">
+              Contact Us
+            </Link>
+            <Link to="/faq" className="text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-400">
+              FAQs
             </Link>
           </div>
 
