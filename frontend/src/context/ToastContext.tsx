@@ -10,6 +10,7 @@ interface ToastContextType {
   toasts: Toast[];
   addToast: (type: Toast['type'], message: string) => void;
   removeToast: (id: string) => void;
+  showToast: (message: string, type: Toast['type']) => void;
 }
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
@@ -29,8 +30,12 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setToasts(prev => prev.filter(toast => toast.id !== id));
   }, []);
 
+  const showToast = useCallback((message: string, type: Toast['type']) => {
+    addToast(type, message);
+  }, [addToast]);
+
   return (
-    <ToastContext.Provider value={{ toasts, addToast, removeToast }}>
+    <ToastContext.Provider value={{ toasts, addToast, removeToast, showToast }}>
       {children}
     </ToastContext.Provider>
   );
