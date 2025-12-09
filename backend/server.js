@@ -1,9 +1,14 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
 require('dotenv').config();
 
 const app = express();
+
+app.use(helmet());
+app.use(mongoSanitize());
 
 // CORS configuration - ALLOW ALL ORIGINS for now
 app.use(cors({
@@ -39,9 +44,13 @@ mongoose.connection.on('error', (err) => {
 });
 
 // Routes
+const { apiLimiter } = require('./middleware/rateLimiter');
+app.use('/api', apiLimiter);
 app.use('/api/products', require('./routes/products'));
 app.use('/api/orders', require('./routes/orders'));
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/reviews', require('./routes/reviews'));
+app.use('/api/wishlist', require('./routes/wishlist'));
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
