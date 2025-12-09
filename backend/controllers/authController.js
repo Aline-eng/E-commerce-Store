@@ -49,7 +49,7 @@ exports.login = async (req, res) => {
     await user.save();
 
     res.json({
-      user: { id: user._id, name: user.name, email: user.email },
+      user: { id: user._id, name: user.name, email: user.email, role: user.role },
       accessToken,
       refreshToken
     });
