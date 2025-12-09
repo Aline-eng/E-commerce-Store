@@ -27,11 +27,12 @@ const Navbar: React.FC = () => {
       </div>
 
       {/* Main navbar */}
-      <nav className="sticky top-0 z-50 bg-white dark:bg-black border-b border-gray-200 dark:border-gray-900">
+      <nav className="sticky top-0 z-50 bg-white border-b border-gray-200 dark:bg-black dark:border-gray-900">
         <div className="container flex items-center justify-between px-4 py-4 mx-auto">
           {/* Logo */}
-          <Link to="/" className="text-2xl font-black text-gray-900 dark:text-white">
-            SHOP.CO
+          <Link to="/" className="flex items-center gap-2">
+            <img src="/logo.jpeg" alt="SHOP.CO" className="h-10" />
+            <span className="text-2xl font-black text-gray-900 dark:text-white">SHOP.CO</span>
           </Link>
 
           {/* Menu */}
@@ -52,12 +53,12 @@ const Navbar: React.FC = () => {
 
           {/* Search and actions */}
           <div className="flex items-center gap-4">
-            <div className="items-center flex-1 hidden px-4 py-2 bg-gray-100 dark:bg-gray-900 rounded-full md:flex">
+            <div className="items-center flex-1 hidden px-4 py-2 bg-gray-100 rounded-full dark:bg-gray-900 md:flex">
               <span className="text-gray-400">🔍</span>
               <input
                 type="text"
                 placeholder="Search for products..."
-                className="flex-1 ml-2 text-sm bg-transparent outline-none text-gray-900 dark:text-white"
+                className="flex-1 ml-2 text-sm text-gray-900 bg-transparent outline-none dark:text-white"
               />
             </div>
 
@@ -71,12 +72,27 @@ const Navbar: React.FC = () => {
             </Link>
 
             {isAuthenticated ? (
-              <Link
-                to="/profile"
-                className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white"
-              >
-                {user?.name}
-              </Link>
+              <div className="relative group">
+                <button className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white">
+                  {user?.name}
+                </button>
+                <div className="absolute right-0 hidden w-48 py-2 mt-2 bg-white border border-gray-200 shadow-lg dark:bg-gray-900 dark:border-gray-800 rounded-xl group-hover:block">
+                  <Link to="/profile" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    Profile
+                  </Link>
+                  {user?.role === 'admin' && (
+                    <Link to="/admin" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
+                      Admin Dashboard
+                    </Link>
+                  )}
+                  <Link to="/orders" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    Orders
+                  </Link>
+                  <Link to="/wishlist" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    Wishlist
+                  </Link>
+                </div>
+              </div>
             ) : (
               <Link
                 to="/login"
