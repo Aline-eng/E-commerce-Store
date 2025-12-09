@@ -2,7 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import ProductList from './components/ProductList';
+import Home from './pages/Home';
+import Products from './pages/Products';
 import Cart from './components/Cart';
 import Orders from './components/Orders';
 import Login from './pages/Login';
@@ -25,11 +26,12 @@ function App() {
         <AuthProvider>
           <CartProvider>
             <Router>
-              <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
+              <div className="min-h-screen transition-colors bg-gray-50 dark:bg-black">
                 <Navbar />
-                <main className="container mx-auto px-4 py-8">
+                <main className="container px-4 py-8 mx-auto">
                   <Routes>
-                    <Route path="/" element={<ProductList />} />
+                    <Route path="/" element={<Home />} />
+                    <Route path="/products" element={<Products />} />
                     <Route path="/product/:id" element={<ProductDetail />} />
                     <Route path="/cart" element={<Cart />} />
                     <Route path="/login" element={<Login />} />

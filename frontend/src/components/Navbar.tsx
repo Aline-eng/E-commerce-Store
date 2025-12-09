@@ -14,64 +14,57 @@ const Navbar: React.FC = () => {
   const totalItems = state.items.reduce((total, item) => total + item.quantity, 0);
 
   const isActive = (path: string) => location.pathname === path;
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <nav className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">S</span>
-            </div>
-            <span className="text-xl font-bold text-gray-900 dark:text-white">ShopEasy</span>
+    <>
+      {/* Promo bar */}
+      <div className="py-2 text-sm text-center text-white bg-black dark:bg-gray-900">
+        Sign up and get 20% off to your first order.{' '}
+        <a href="#" className="font-semibold underline">
+          Sign Up Now
+        </a>
+      </div>
+
+      {/* Main navbar */}
+      <nav className="sticky top-0 z-50 bg-white dark:bg-black border-b border-gray-200 dark:border-gray-900">
+        <div className="container flex items-center justify-between px-4 py-4 mx-auto">
+          {/* Logo */}
+          <Link to="/" className="text-2xl font-black text-gray-900 dark:text-white">
+            SHOP.CO
           </Link>
 
-          <div className="hidden md:flex items-center space-x-8">
-            <Link
-              to="/"
-              className={`text-sm font-medium transition-colors relative pb-1 ${
-                isActive('/') 
-                  ? 'text-blue-600 dark:text-blue-400' 
-                  : 'text-gray-700 dark:text-gray-300 hover:text-blue-600'
-              }`}
-            >
-              Home
-              {isActive('/') && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600"></span>}
+          {/* Menu */}
+          <div className="items-center hidden gap-8 md:flex">
+            <div className="relative group">
+              <Link to="/products" className="text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-400">Shop</Link>
+            </div>
+            <Link to="/products" className="text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-400">
+              On Sale
             </Link>
-            
-            <Link
-              to="/"
-              className={`text-sm font-medium transition-colors relative pb-1 ${
-                isActive('/products') 
-                  ? 'text-blue-600 dark:text-blue-400' 
-                  : 'text-gray-700 dark:text-gray-300 hover:text-blue-600'
-              }`}
-            >
-              Products
-              {isActive('/products') && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600"></span>}
+            <Link to="/products" className="text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-400">
+              New Arrivals
             </Link>
+            <Link to="/products" className="text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-400">
+              Brands
+            </Link>
+          </div>
 
-            {isAuthenticated && (
-              <Link
-                to="/wishlist"
-                className="relative text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 transition-colors"
-              >
-                Wishlist
-                {wishlist.length > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-semibold">
-                    {wishlist.length}
-                  </span>
-                )}
-              </Link>
-            )}
+          {/* Search and actions */}
+          <div className="flex items-center gap-4">
+            <div className="items-center flex-1 hidden px-4 py-2 bg-gray-100 dark:bg-gray-900 rounded-full md:flex">
+              <span className="text-gray-400">🔍</span>
+              <input
+                type="text"
+                placeholder="Search for products..."
+                className="flex-1 ml-2 text-sm bg-transparent outline-none text-gray-900 dark:text-white"
+              />
+            </div>
 
-            <Link
-              to="/cart"
-              className="relative text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 transition-colors"
-            >
-              Cart
+            <Link to="/cart" className="relative">
+              <button className="text-2xl hover:text-gray-600 dark:hover:text-gray-400">🛒</button>
               {totalItems > 0 && (
-                <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-semibold">
+                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full -top-2 -right-2">
                   {totalItems}
                 </span>
               )}
@@ -80,14 +73,14 @@ const Navbar: React.FC = () => {
             {isAuthenticated ? (
               <Link
                 to="/profile"
-                className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 transition-colors"
+                className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white"
               >
                 {user?.name}
               </Link>
             ) : (
               <Link
                 to="/login"
-                className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                className="btn-primary"
               >
                 Login
               </Link>
@@ -95,7 +88,7 @@ const Navbar: React.FC = () => {
 
             <button
               onClick={toggleTheme}
-              className="p-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 transition-colors"
+              className="p-2 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white"
               aria-label="Toggle dark mode"
             >
               {isDark ? (
@@ -108,10 +101,18 @@ const Navbar: React.FC = () => {
                 </svg>
               )}
             </button>
+
+            {/* Mobile menu button */}
+            <button
+              className="text-2xl text-gray-900 dark:text-white md:hidden"
+              onClick={() => setMenuOpen(!menuOpen)}
+            >
+              ☰
+            </button>
           </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+    </>
   );
 };
 
