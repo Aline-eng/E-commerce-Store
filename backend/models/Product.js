@@ -23,6 +23,9 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  images: [{
+    type: String
+  }],
   stock: {
     type: Number,
     required: true,
@@ -37,6 +40,10 @@ const productSchema = new mongoose.Schema({
     default: 0,
     min: 0,
     max: 5
+  },
+  reviewCount: {
+    type: Number,
+    default: 0
   }
 }, {
   timestamps: true
