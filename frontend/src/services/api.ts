@@ -18,6 +18,16 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     console.log(`🔄 Making ${config.method?.toUpperCase()} request to: ${config.baseURL}${config.url}`);
+    
+    // Add auth token if available
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+      console.log('🔐 Added auth token to request');
+    } else {
+      console.log('⚠️ No auth token found in localStorage');
+    }
+    
     return config;
   },
   (error) => {
@@ -46,7 +56,16 @@ api.interceptors.response.use(
     }
     
     if (error.response?.status === 401) {
-      throw new Error('Authentication required');
+      // Clear invalid tokens
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      
+      // Redirect to login if not already there
+      if (!window.location.pathname.includes('/login')) {
+        window.location.href = '/login';
+      }
+      
+      throw new Error('Session expired. Please login again.');
     }
     
     if (error.response?.status === 404) {
@@ -65,6 +84,7 @@ export interface OrderData {
   customer: {
     name: string;
     email: string;
+    phone?: string;
     address: {
       street: string;
       city: string;
@@ -76,9 +96,15 @@ export interface OrderData {
   items: Array<{
     product: string;
     quantity: number;
-    price: number;
+    size?: string;
+    color?: string;
   }>;
-  totalAmount: number;
+  pricing?: {
+    discount?: number;
+  };
+  paymentMethod?: string;
+  shippingMethod?: string;
+  notes?: string;
 }
 
 // Test backend connection
@@ -139,8 +165,13 @@ export const orderAPI = {
     return response.data;
   },
 
-  updateOrder: async (id: string, updateData: any) => {
-    const response = await api.patch(`/orders/${id}`, updateData);
+  updateOrderStatus: async (id: string, status: string, trackingNumber?: string, notes?: string) => {
+    const response = await api.patch(`/orders/${id}/status`, { status, trackingNumber, notes });
+    return response.data;
+  },
+
+  cancelOrder: async (id: string) => {
+    const response = await api.patch(`/orders/${id}/cancel`);
     return response.data;
   },
 

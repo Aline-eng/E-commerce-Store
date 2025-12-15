@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import { orderAPI } from '../services/api';
 
 const Cart: React.FC = () => {
   const { state, removeFromCart, updateQuantity, clearCart } = useCart();
+  const { user, isAuthenticated } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [promoCode, setPromoCode] = useState('');
@@ -20,16 +22,50 @@ const Cart: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
+      
+      // Check if user is authenticated
+      if (!isAuthenticated || !user) {
+        setError('Please login to place an order');
+        return;
+      }
+      
+      // Format order data for new order system
       const orderData = {
-        items: state.items,
-        totalAmount: total,
-        customer: 'Guest',
+        customer: {
+          name: user.name,
+          email: user.email,
+          phone: '+1 (555) 123-4567',
+          address: {
+            street: '123 Main Street',
+            city: 'New York',
+            state: 'NY',
+            zipCode: '10001',
+            country: 'USA'
+          }
+        },
+        items: state.items.map(item => ({
+          product: item.product._id,
+          quantity: item.quantity,
+          size: 'M',
+          color: 'Default'
+        })),
+        pricing: {
+          discount: appliedPromo ? promoDiscount : 0
+        },
+        paymentMethod: 'Credit Card',
+        shippingMethod: deliveryFee === 0 ? 'Free Shipping' : 'Standard Shipping',
+        notes: appliedPromo ? `Promo code applied: ${appliedPromo.code}` : ''
       };
-      await orderAPI.createOrder(orderData as any);
+      
+      const response = await orderAPI.createOrder(orderData);
       clearCart();
-      alert('Order placed successfully!');
+      alert(`Order placed successfully! Order ID: ${response.orderId}`);
+      
+      // Redirect to orders page
+      window.location.href = '/orders';
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to place order');
+      console.error('Checkout error:', err);
+      setError(err.response?.data?.message || err.message || 'Failed to place order');
     } finally {
       setLoading(false);
     }
