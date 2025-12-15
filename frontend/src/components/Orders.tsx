@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useState } from 'react';
-import { getOrders } from '../services/api';
+import { getOrders, orderAPI } from '../services/api';
 import { Link } from 'react-router-dom';
 
 interface OrderItem {
@@ -40,12 +40,22 @@ const Orders: React.FC = () => {
     loadOrders();
   }, [loadOrders]);
 
-  const handleCancelOrder = (orderId: string) => {
+  const handleCancelOrder = async (orderId: string) => {
     if (window.confirm('Are you sure you want to cancel this order?')) {
-      setOrders(orders.map(order => 
-        order._id === orderId ? { ...order, status: 'cancelled' } : order
-      ));
-      alert('Order cancelled successfully');
+      try {
+        // Call API to update order status
+        await orderAPI.updateOrder(orderId, { status: 'cancelled' });
+
+        // Update local state
+        setOrders(orders.map(order =>
+          order._id === orderId ? { ...order, status: 'cancelled' } : order
+        ));
+        alert('Order cancelled successfully');
+      } catch (error: any) {
+        console.error('Error cancelling order:', error);
+        const errorMessage = error.response?.data?.message || 'Failed to cancel order. Please try again.';
+        alert(errorMessage);
+      }
     }
   };
 
@@ -82,7 +92,7 @@ const Orders: React.FC = () => {
 
   return (
     <div className="min-h-screen py-8 bg-gray-50 dark:bg-black">
-      <div className="container px-4 mx-auto max-w-6xl">
+      <div className="container max-w-6xl px-4 mx-auto">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-4xl font-black text-gray-900 dark:text-white">My Orders</h1>
           <Link to="/products" className="btn-primary">Continue Shopping</Link>
@@ -126,7 +136,7 @@ const Orders: React.FC = () => {
                     {order.items.map((item: OrderItem, index: number) => (
                       <div key={item.id || index} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
                         <div className="flex items-center gap-4">
-                          <div className="flex items-center justify-center w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-lg">
+                          <div className="flex items-center justify-center w-16 h-16 bg-gray-200 rounded-lg dark:bg-gray-700">
                             <span className="text-2xl">📦</span>
                           </div>
                           <div>

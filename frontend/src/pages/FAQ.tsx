@@ -53,9 +53,9 @@ const FAQ: React.FC = () => {
 
   return (
     <div className="min-h-screen py-16 bg-white dark:bg-black">
-      <div className="container px-4 mx-auto max-w-4xl">
-        <h1 className="mb-4 text-5xl font-black text-gray-900 dark:text-white">Frequently Asked Questions</h1>
-        <p className="mb-12 text-lg text-gray-700 dark:text-gray-300">
+      <div className="container max-w-4xl px-4 mx-auto">
+        <h1 className="mb-4 text-3xl font-black text-gray-900 dark:text-white">Frequently Asked Questions</h1>
+        <p className="mb-12 text-md gray-700 text- dark:text-gray-300">
           Find answers to common questions about our products, shipping, and policies.
         </p>
 
@@ -63,13 +63,13 @@ const FAQ: React.FC = () => {
           {faqs.map((faq, index) => (
             <div
               key={index}
-              className="overflow-hidden border border-gray-200 dark:border-gray-800 rounded-lg"
+              className="overflow-hidden border border-gray-200 rounded-lg dark:border-gray-800"
             >
               <button
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
                 className="flex items-center justify-between w-full p-6 text-left transition-colors hover:bg-gray-50 dark:hover:bg-gray-900"
               >
-                <span className="text-lg font-semibold text-gray-900 dark:text-white">
+                <span className="text-sm font-semibold text-gray-900 dark:text-white">
                   {faq.question}
                 </span>
                 <span className="text-2xl text-gray-600 dark:text-gray-400">

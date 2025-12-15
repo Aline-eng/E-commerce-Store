@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const Header: React.FC = () => {
   return (
-    <div className="relative flex items-center ml-2 g-gray-100 mmin-h-screen dark:bg-gray-900">
+    <div className="relative flex items-center ml-2 g-gray-100 dark:bg-gray-900">
       <div className="container grid items-center grid-cols-1 gap-12 px-4 mx-auto lg:grid-cols-2">
         {/* Left content */}
         <div>

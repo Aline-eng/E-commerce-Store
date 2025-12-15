@@ -139,6 +139,11 @@ export const orderAPI = {
     return response.data;
   },
 
+  updateOrder: async (id: string, updateData: any) => {
+    const response = await api.patch(`/orders/${id}`, updateData);
+    return response.data;
+  },
+
   getAllOrders: async () => {
     const response = await api.get('/orders');
     return response.data;
