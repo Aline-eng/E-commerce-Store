@@ -13,7 +13,7 @@ const Footer: React.FC = () => {
     <footer className="mt-20 text-white bg-black dark:bg-gray-950">
       {/* Newsletter section */}
       <div className="container px-4 py-12 mx-auto mb-12">
-        <div className="flex flex-col items-center justify-between gap-8 p-8 bg-black dark:bg-gray-900 border border-white dark:border-gray-800 rounded-3xl md:p-12 md:flex-row">
+        <div className="flex flex-col items-center justify-between gap-8 p-8 bg-black border border-white dark:bg-gray-900 dark:border-gray-800 rounded-3xl md:p-12 md:flex-row">
           <h3 className="text-3xl font-black md:text-4xl">STAY UPTO DATE ABOUT OUR LATEST OFFERS</h3>
           <div className="flex flex-col w-full gap-4 md:w-auto">
             <input
@@ -21,7 +21,7 @@ const Footer: React.FC = () => {
               placeholder="Enter your email address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-6 py-3 text-black dark:text-white dark:bg-gray-800 rounded-full outline-none md:w-80"
+              className="w-full px-6 py-3 text-black rounded-full outline-none dark:text-white dark:bg-gray-800 md:w-80"
             />
             <button
               onClick={handleSubscribe}
@@ -37,7 +37,7 @@ const Footer: React.FC = () => {
       <div className="container grid grid-cols-1 gap-8 px-4 py-12 mx-auto mb-8 border-t border-gray-700 dark:border-gray-800 md:grid-cols-5">
         {/* Brand */}
         <div>
-          <h4 className="mb-4 text-2xl font-black">SHOP.CO</h4>
+          <h4 className="mb-4 text-2xl font-black">ShopEasy</h4>
           <p className="text-sm text-gray-400">
             We have clothes that suits your style and which you're proud to wear. From women to men.
           </p>

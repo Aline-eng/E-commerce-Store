@@ -22,7 +22,7 @@ const Navbar: React.FC = () => {
       {/* Promo bar */}
       <div className="py-2 text-sm text-center text-white bg-black dark:bg-gray-900">
         Sign up and get 20% off to your first order.{' '}
-        <a href="#" className="font-semibold underline">
+        <a href="/register" className="font-semibold underline">
           Sign Up Now
         </a>
       </div>
@@ -32,8 +32,8 @@ const Navbar: React.FC = () => {
         <div className="container flex items-center justify-between px-4 py-4 mx-auto">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
-            <img src="/logo.jpeg" alt="SHOP.CO" className="h-10" />
-            <span className="text-2xl font-black text-gray-900 dark:text-white">SHOP.CO</span>
+            <img src="/logo.jpeg" alt="ShopEasy" className="h-10" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+            <span className="text-2xl font-black text-gray-900 dark:text-white">ShopEasy</span>
           </Link>
 
           {/* Menu */}

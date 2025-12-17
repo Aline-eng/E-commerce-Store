@@ -127,6 +127,8 @@ exports.createOrder = async (req, res) => {
 // Get user's orders
 exports.getUserOrders = async (req, res) => {
   try {
+    console.log('📋 Getting orders for user:', req.user.email, 'Role:', req.user.role);
+    
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const status = req.query.status;
@@ -135,14 +137,18 @@ exports.getUserOrders = async (req, res) => {
     
     // Role-based filtering
     if (req.user.role === 'admin') {
+      console.log('👑 Admin user - showing all orders');
       // Admin can see all orders or filter by email
       if (req.query.email) {
         filter['customer.email'] = req.query.email;
       }
     } else {
+      console.log('👤 Regular user - showing user orders only');
       // Regular users see only their orders
       filter.user = req.userId;
     }
+    
+    console.log('🔍 Order filter:', filter);
     
     // Status filter
     if (status && status !== 'all') {
@@ -157,6 +163,8 @@ exports.getUserOrders = async (req, res) => {
     
     const total = await Order.countDocuments(filter);
     
+    console.log(`📊 Found ${orders.length} orders out of ${total} total`);
+    
     // Add progress information to each order
     const ordersWithProgress = orders.map(order => ({
       ...order.toObject(),
@@ -165,6 +173,7 @@ exports.getUserOrders = async (req, res) => {
       canReturn: order.canBeReturned()
     }));
     
+    console.log('✅ Sending orders response');
     res.json({
       orders: ordersWithProgress,
       pagination: {

@@ -47,7 +47,7 @@ const Register: React.FC = () => {
         <div className="w-full max-w-md">
           <div className="mb-10">
             <h2 className="mb-2 text-4xl font-black text-gray-900 dark:text-white">Create Account</h2>
-            <p className="text-gray-600 dark:text-gray-400">Join SHOP.CO and start shopping today</p>
+            <p className="text-gray-600 dark:text-gray-400">Join ShopEasy and start shopping today</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -185,7 +185,7 @@ const Register: React.FC = () => {
         />
         <div className="absolute inset-0 bg-gradient-to-bl from-black/60 to-black/30">
           <div className="flex flex-col justify-center h-full px-16 text-white">
-            <h1 className="mb-4 text-5xl font-black">Join SHOP.CO Today</h1>
+            <h1 className="mb-4 text-5xl font-black">Join ShopEasy Today</h1>
             <p className="text-xl text-gray-200">Get access to exclusive deals and latest fashion trends</p>
             <div className="grid grid-cols-3 gap-8 mt-12">
               <div>

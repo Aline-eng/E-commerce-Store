@@ -18,6 +18,10 @@ const Login: React.FC = () => {
     try {
       await login(email, password);
       showToast('Login successful!', 'success');
+      
+      // Role-based redirect will be handled by the guards
+      // Admin users will be redirected by AdminGuard
+      // Customer users will be redirected by CustomerGuard
       navigate('/');
     } catch (error: any) {
       showToast(error.response?.data?.error || 'Login failed', 'error');
@@ -37,7 +41,7 @@ const Login: React.FC = () => {
         />
         <div className="absolute inset-0 bg-gradient-to-br from-black/60 to-black/30">
           <div className="flex flex-col justify-center h-full px-16 text-white">
-            <h1 className="mb-4 text-5xl font-black">Welcome Back to SHOP.CO</h1>
+            <h1 className="mb-4 text-5xl font-black">Welcome Back to ShopEasy</h1>
             <p className="text-xl text-gray-200">Discover the latest trends in fashion</p>
           </div>
         </div>
@@ -134,6 +138,14 @@ const Login: React.FC = () => {
                 Create Account
               </Link>
             </p>
+          </div>
+          <div className="mt-6 text-center">
+            <Link to="/" className="inline-flex items-center text-sm text-gray-500 transition-colors dark:text-gray-500 hover:text-black dark:hover:text-white">
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Back to Home
+            </Link>
           </div>
         </div>
       </div>

@@ -6,8 +6,11 @@ const auth = require('../middleware/auth');
 // Get all users (admin only)
 router.get('/', auth, async (req, res) => {
   try {
+    console.log('👥 Getting users for:', req.user.email, 'Role:', req.user.role);
+    
     // Check if user is admin
     if (req.user.role !== 'admin') {
+      console.log('❌ Access denied - not admin');
       return res.status(403).json({ message: 'Access denied. Admin role required.' });
     }
 
@@ -15,6 +18,7 @@ router.get('/', auth, async (req, res) => {
       .select('-password -refreshTokens -verificationToken -resetPasswordToken -resetPasswordExpires')
       .sort({ createdAt: -1 });
 
+    console.log(`📊 Found ${users.length} users`);
     res.json(users);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -44,6 +48,25 @@ router.put('/:id', auth, async (req, res) => {
     res.json(user);
   } catch (error) {
     res.status(400).json({ message: error.message });
+  }
+});
+
+// Make user admin (temporary route for setup)
+router.patch('/make-admin/:email', async (req, res) => {
+  try {
+    const user = await User.findOneAndUpdate(
+      { email: req.params.email },
+      { role: 'admin' },
+      { new: true }
+    ).select('-password');
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({ message: 'User role updated to admin', user });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 });
 

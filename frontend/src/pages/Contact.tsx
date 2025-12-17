@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useToast } from '../context/ToastContext';
+import axios from 'axios';
 
 const Contact: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -7,11 +9,22 @@ const Contact: React.FC = () => {
     subject: '',
     message: ''
   });
+  const [loading, setLoading] = useState(false);
+  const { showToast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert('Message sent! We will get back to you soon.');
-    setFormData({ name: '', email: '', subject: '', message: '' });
+    setLoading(true);
+
+    try {
+      await axios.post(`${process.env.REACT_APP_API_URL}/contact`, formData);
+      showToast('Message sent successfully! We\'ll get back to you soon.', 'success');
+      setFormData({ name: '', email: '', subject: '', message: '' });
+    } catch (error: any) {
+      showToast(error.response?.data?.message || 'Failed to send message', 'error');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -32,7 +45,7 @@ const Contact: React.FC = () => {
             <div className="space-y-4">
               <div>
                 <h3 className="font-bold text-gray-900 dark:text-white">Email</h3>
-                <p className="text-gray-700 dark:text-gray-300">support@shop.co</p>
+                <p className="text-gray-700 dark:text-gray-300">support@shopeasy.com</p>
               </div>
               <div>
                 <h3 className="font-bold text-gray-900 dark:text-white">Phone</h3>
@@ -91,8 +104,12 @@ const Contact: React.FC = () => {
                 className="input-field"
               />
             </div>
-            <button type="submit" className="w-full btn-primary">
-              Send Message
+            <button 
+              type="submit" 
+              disabled={loading}
+              className="w-full btn-primary disabled:opacity-50"
+            >
+              {loading ? 'Sending...' : 'Send Message'}
             </button>
           </form>
         </div>

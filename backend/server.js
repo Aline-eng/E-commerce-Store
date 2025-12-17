@@ -52,6 +52,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/reviews', require('./routes/reviews'));
 app.use('/api/wishlist', require('./routes/wishlist'));
+app.use('/api/contact', require('./routes/contact'));
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

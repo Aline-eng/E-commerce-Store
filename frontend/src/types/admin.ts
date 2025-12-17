@@ -1,4 +1,4 @@
-export type OrderStatus = "pending" | "processing" | "shipped" | "delivered" | "cancelled";
+export type OrderStatus = "pending" | "confirmed" | "processing" | "shipped" | "delivered" | "cancelled" | "refunded";
 export type UserRole = "customer" | "admin";
 export type ProductCategory = "electronics" | "clothing" | "accessories" | "home" | "sports" | "books";
 export type AdminSection = "dashboard" | "products" | "orders" | "users" | "settings";
@@ -22,8 +22,20 @@ export interface Product {
 // Order types
 export interface OrderItem {
   product: Product | string;
+  name?: string;
+  image?: string;
   quantity: number;
   price: number;
+  size?: string;
+  color?: string;
+}
+
+export interface OrderPricing {
+  subtotal: number;
+  tax: number;
+  shipping: number;
+  discount: number;
+  total: number;
 }
 
 export interface Order {
@@ -33,13 +45,23 @@ export interface Order {
   customer: {
     name: string;
     email: string;
-    phone: string;
-    address: string;
+    phone?: string;
+    address: {
+      street: string;
+      city: string;
+      state: string;
+      zipCode: string;
+      country: string;
+    };
   };
   items: OrderItem[];
-  totalAmount: number;
+  pricing?: OrderPricing;
+  totalAmount?: number; // fallback for older orders
   status: OrderStatus;
   paymentMethod: string;
+  shippingMethod?: string;
+  notes?: string;
+  trackingNumber?: string;
   createdAt: string;
   updatedAt: string;
 }

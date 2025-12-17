@@ -17,6 +17,7 @@ router.get('/:id', auth, orderController.getOrder);
 
 // Update order status (Admin only)
 router.patch('/:id/status', auth, orderController.updateOrderStatus);
+router.put('/:id/status', auth, orderController.updateOrderStatus);
 
 // Cancel order
 router.patch('/:id/cancel', auth, orderController.cancelOrder);
