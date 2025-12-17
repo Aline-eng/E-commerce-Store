@@ -1,19 +1,14 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { useWishlist } from '../hooks/useWishlist';
-
 const Navbar: React.FC = () => {
   const { state } = useCart();
   const { user, isAuthenticated } = useAuth();
   const { isDark, toggleTheme } = useTheme();
-  const { wishlist } = useWishlist();
-  const location = useLocation();
   const totalItems = state.items.reduce((total, item) => total + item.quantity, 0);
 
-  const isActive = (path: string) => location.pathname === path;
   const [menuOpen, setMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 

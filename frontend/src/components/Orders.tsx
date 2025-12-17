@@ -78,7 +78,7 @@ const Orders: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
   const { showToast } = useToast();
 
   const loadOrders = useCallback(async () => {
